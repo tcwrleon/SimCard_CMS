@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="SimCard_CMS"
+  id="myeclipse.1433227693953"
+  context-root="/SimCard_CMS"
+  j2ee-spec="5.0"
+  archive="SimCard_CMS.war">
+  <attributes>
+    <attribute name="webrootdir" value="WebContent" />
+  </attributes>
+</project-module>
+

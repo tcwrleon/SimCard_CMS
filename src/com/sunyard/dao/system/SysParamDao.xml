@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunyard.dao.system.SysParamDao">
+	
+	<select id="query" parameterType="java.util.Map" resultType="SysParam">
+		select * from com_param where 1=1
+		<if test="t.param_name !=null and t.param_name !='' ">
+			and param_name like '%${t.param_name}%'
+		</if>
+		
+		<if test="t.param_type !=null and t.param_type  !='' ">
+			and param_type  = #{t.param_type }
+		</if>
+		order by param_type,param_code
+	</select>
+	
+	<select id="queryAll" parameterType="SysParam" resultType="SysParam">
+		select * from com_param order by param_type,param_code
+	</select>
+	
+	<insert id="add" parameterType="SysParam" >
+		insert into com_param 
+			(param_type,prod_type,prod_id,param_code,param_value,param_name,param_desc) 
+		values 
+			(#{param_type,jdbcType=VARCHAR},#{prod_type,jdbcType=VARCHAR},
+			#{prod_id,jdbcType=VARCHAR},#{param_code,jdbcType=VARCHAR},
+			#{param_value,jdbcType=VARCHAR},#{param_name,jdbcType=VARCHAR},
+			#{param_desc,jdbcType=VARCHAR}
+			)
+	</insert>
+	
+	<select id="getById" parameterType="java.lang.String" resultType="SysParam">
+		select * from com_param where param_code = #{id}
+	</select>
+	
+	<update id="update" parameterType="Resources">
+		update com_param set 
+			param_type = #{param_type,jdbcType=VARCHAR},prod_type = #{prod_type,jdbcType=VARCHAR},
+			prod_id = #{prod_id,jdbcType=VARCHAR},param_value = #{param_value,jdbcType=VARCHAR},
+			param_name = #{param_name,jdbcType=VARCHAR},param_desc = #{param_desc,jdbcType=VARCHAR}
+		where param_code = #{param_code,jdbcType=VARCHAR}
+	</update>
+	
+	<delete id="deleteBatch" parameterType="java.util.List">
+		delete from com_param where param_code in 
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+	
+	
+</mapper>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	<constant name="struts.enable.DynamicMethodInvocation" value="false" />
+	<constant name="struts.devMode" value="false" />
+	<constant name="struts.multipart.maxSize" value="40000000"/> 
+	<!-- <constant name="struts.action.extension" value="do"/> -->
+	<package name="aciton" namespace="/" extends="struts-default">
+		<interceptors>
+			<interceptor name="exceptionInterceptor"
+				class="com.sunyard.interceptor.ExceptionInterceptor"></interceptor>
+			<interceptor-stack name="directBankStack">
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+				<interceptor-ref name="exceptionInterceptor"></interceptor-ref> 
+			</interceptor-stack>
+
+		</interceptors>
+
+		<default-interceptor-ref name="directBankStack"></default-interceptor-ref>
+
+		<global-results>
+			<result name="success">/WEB-INF/jsp/common/success.jsp</result>
+			<result name="error">/WEB-INF/jsp/common/error.jsp</result>
+			<result name="layerSuccess">/WEB-INF/jsp/common/layer_success.jsp</result>
+			<result name="layerError">/WEB-INF/jsp/common/layer_error.jsp</result>
+			<result name="report">/WEB-INF/jsp/common/report_list.jsp</result>
+			<result name="check">/WEB-INF/jsp/business/synchronize_check/synchronize_check.jsp</result>
+		</global-results>
+
+		<global-exception-mappings>
+			<exception-mapping exception="java.lang.Exception" result="error" />
+		</global-exception-mappings>
+		
+
+	</package>
+
+	<include file="struts-cfg/struts-*.xml"></include>
+
+
+
+</struts>

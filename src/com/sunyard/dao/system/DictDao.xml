@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunyard.dao.system.DictDao">	
+	<!-- 查询所有的数据字典 -->
+	<select id="queryAll" parameterType="Dict" resultType="Dict">
+		select * from com_dict  order by sun_key,sort,val
+	</select>
+	
+	<!-- 由主键和值查询其对应中文说明-->
+	<select id="getAllDdContentSpec" parameterType="java.util.Map" resultType="java.lang.String">
+        SELECT prompt FROM com_dict
+         <where>
+          sun_key = #{sun_key} and val = #{val}
+         </where>
+    </select>
+	
+	<!-- 由主键查询所有对应的数据字典 -->
+	<select id="getAllDdContentByKey" parameterType="java.lang.String" resultType="Dict">
+        select * FROM com_dict where sun_key = #{sun_key}
+    </select>
+    
+    <!-- 多对一映射关系 -->
+    <resultMap type="Dict" id="dictResultMap">
+    	<result column="sun_key" property="sun_key"/>
+    	<result column="val" property="val"/>
+    	<result column="prompt" property="prompt"/>
+    	<result column="sort" property="sort"/>
+    	<association property="dictMap" javaType="DictMap">
+    		<result column="map_sun_key" property="sun_key"/>
+    		<result column="map_prompt" property="prompt"/>
+    	</association>
+    </resultMap>
+    
+    <!-- 支持说明和数据字典名称模糊查询 -->
+    <select id="query" parameterType="java.util.Map" resultMap="dictResultMap">
+    	select m.sun_key,m.prompt,val,sort,n.sun_key as map_sun_key,n.prompt as map_prompt
+    	from com_dict m left join com_dictmap n on m.sun_key = n.sun_key 
+    	where 1=1 
+    	<if test="t.prompt !=null and t.prompt !='' ">
+			and m.prompt like '%${t.prompt}%'
+		</if>
+		<if test="t.dictMap != null">
+			<if test="t.dictMap.prompt !=null and t.dictMap.prompt  !='' ">
+			and n.prompt like '%${t.dictMap.prompt}%'
+			</if>
+		</if>
+		
+    	order by m.sun_key,sort,val
+    </select>
+    
+    <!-- com_dictmap表的crud -->
+    <select id="getDictMapByKey" parameterType="java.lang.String" resultType="DictMap">
+    	select * from com_dictmap where sun_key = #{sun_key}
+    </select>
+    
+    <delete id="deleteDictMap" parameterType="DictMap">
+    	delete from com_dictmap where sun_key = #{sun_key}
+    </delete>
+    
+    <insert id="addDictMap" parameterType="DictMap">
+    	insert into com_dictmap (sun_key,prompt) values (#{sun_key,jdbcType=VARCHAR},#{prompt,jdbcType=VARCHAR})
+    </insert>
+    
+    <update id="updateDictMap" parameterType="DictMap">
+    	update com_dictmap set prompt = #{prompt,jdbcType=VARCHAR} where sun_key = #{sun_key}
+    </update>
+    
+    <!-- 数据字典批量插入（oracle写法） -->
+    <insert id="addBatchDict" parameterType="java.util.List">
+    	insert into com_dict (sun_key,val,prompt,sort)
+    	<foreach collection="list" item="item" index="index" separator="UNION">
+    		select #{item.sun_key},#{item.val},#{item.prompt},#{item.sort} FROM DUAL 
+    	</foreach>
+    </insert>
+    
+    <!-- 数据字典批量更新（oracle写法） -->
+    <update id="updateBatchDict" parameterType="java.util.List">
+    	<foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
+             update com_dict 
+             <set>
+                  prompt = #{item.prompt,jdbcType=VARCHAR}
+             </set>
+             where sun_key = #{item.sun_key} and val = #{item.val}
+       	</foreach>
+    </update>
+    
+    <!-- 数据字典批量删除（oracle写法） -->
+    <insert id="deleteBatchDict" parameterType="java.util.List">
+    	delete from com_dict 
+    	<where>
+   			<foreach collection="list" index="index" item="item" open="(" separator="or" close=")">     
+  				(sun_key = #{item.sun_key} and val = #{item.val})
+     		</foreach>
+   		</where>
+    </insert>
+    
+    <!-- 数据字典批量删除 -->
+    <delete id="deleteBatchDictMap" parameterType="java.util.List">
+    	delete from com_dictmap where sun_key in
+    	<foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+    		#{item}
+    	</foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	<package name="system" namespace="/" extends="aciton">	
+		<!-- 用户登录 -->
+		<action name="loginAction_*" class="loginAction" method="{1}">
+			<result name="login">/WEB-INF/jsp/background/framework/login.jsp</result>
+			<result name="main">/WEB-INF/jsp/background/framework/index.jsp</result>
+			<result name="pwdModi">/WEB-INF/jsp/background/user/pwd_modi.jsp</result>
+		</action>
+			
+		<!-- 机构管理 -->
+		<action name="departmentAction_*" class="departmentAction" method="{1}">
+			<result name="query">/WEB-INF/jsp/background/department/department_list.jsp</result>
+			<result name="add">/WEB-INF/jsp/background/department/department_add.jsp</result>
+		</action>
+		
+		<!-- 用户管理 -->
+		<action name="userAction_*" class="userAction" method="{1}">
+			<result name="query">/WEB-INF/jsp/background/user/user_list.jsp</result>
+			<result name="add">/WEB-INF/jsp/background/user/user_add.jsp</result>
+			<result name="pwdModi">/WEB-INF/jsp/background/user/pwd_modi.jsp</result>
+			<result name="roleAssign">/WEB-INF/jsp/background/user/role_assign.jsp</result>
+		</action>
+
+		<!-- 资源管理 -->
+		<action name="resourceAction_*" class="resourceAction" method="{1}">
+			<result name="query">/WEB-INF/jsp/background/resource/resource_list.jsp</result>
+			<result name="add">/WEB-INF/jsp/background/resource/resource_add.jsp</result>
+		</action>
+		
+		<!-- 角色管理 -->
+		<action name="roleAction_*" class="roleAction" method="{1}">
+			<result name="query">/WEB-INF/jsp/background/role/role_list.jsp</result>
+			<result name="add">/WEB-INF/jsp/background/role/role_add.jsp</result>
+			<result name="assign">/WEB-INF/jsp/background/role/resource_assign.jsp</result>
+		</action>
+		
+		<!-- 系统参数管理 -->
+		<action name="sysParamAction_*" class="sysParamAction" method="{1}">
+			<result name="query">/WEB-INF/jsp/background/sysparam/sysparam_list.jsp</result>
+			<result name="add">/WEB-INF/jsp/background/sysparam/sysparam_add.jsp</result>
+		</action>
+		
+		<!-- 数据字典管理 -->
+		<action name="dictAction_*" class="dictAction" method="{1}">
+			<result name="query">/WEB-INF/jsp/background/dict/dict_list.jsp</result>
+			<result name="add">/WEB-INF/jsp/background/dict/dict_add.jsp</result>
+			<result name="modi">/WEB-INF/jsp/background/dict/dict_modi.jsp</result>
+		</action>
+		
+		<!-- 缓存刷新-->
+		<action name="cacheRefreshAction_*" class="cacheRefreshAction" method="{1}">
+			<result name="query">/WEB-INF/jsp/background/refresh/refresh_list.jsp</result>
+		</action>
+		
+		<!-- 用户操作日志-->
+		<action name="operLogAction_*" class="operLogAction" method="{1}"></action>
+		
+		<!-- 系统运行日志-->
+		<action name="runLogAction_*" class="runLogAction" method="{1}"></action>
+		
+	</package>
+	
+</struts>

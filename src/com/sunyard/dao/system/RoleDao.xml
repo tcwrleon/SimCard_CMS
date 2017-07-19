@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunyard.dao.system.RoleDao">
+	
+	<select id="queryAll" parameterType="Role" resultType="Role">
+		select * from admin_role where 1=1
+		<if test="platform_type !=null and platform_type  !='' ">
+			and platform_type  = #{platform_type }
+		</if>
+		order by role_id
+	</select>
+	
+	<select id="query" parameterType="java.util.Map" resultType="Role">
+		select * from admin_role where 1=1
+		<if test="t.role_id !=null and t.role_id!='' ">
+			and role_id like '%${t.role_id}%'
+		</if>
+		<if test="t.role_name !=null and t.role_name !='' ">
+			and role_name like '%${t.role_name}%'
+		</if>
+		<if test="t.platform_type !=null and t.platform_type  !='' ">
+			and platform_type  = #{t.platform_type }
+		</if>
+		order by role_id
+	</select>
+	<sql id="queryParentRes">
+		(select privilege_id,privilege_name,url,type,sort,valid,
+			(select privilege_name from admin_privilege where privilege_id = t.parent_id )parent_id 
+		from admin_privilege t) 
+	</sql>
+	<select id="queryRoleResources" parameterType="Role" resultType="java.util.Map">
+		select r.*,p.* from admin_roleprivilege arp, admin_role r, <include refid="queryParentRes"></include> p 
+		where arp.role_id = r.role_id and arp.privilege_id = p.privilege_id
+		<if test="role_id !=null and role_id!='' ">
+			and r.role_id like '%${role_id}%'
+		</if>
+		<if test="role_name !=null and role_name !='' ">
+			and r.role_name like '%${role_name}%'
+		</if>
+		<if test="platform_type !=null and platform_type  !='' ">
+			and r.platform_type  = #{platform_type }
+		</if>
+		order by r.platform_type,r.role_id,p.privilege_id
+	</select>
+	
+	<insert id="add" parameterType="Resources" >
+		insert into admin_role 
+			(role_id,role_name,role_desc,platform_type) 
+		values 
+			(#{role_id,jdbcType=VARCHAR},#{role_name,jdbcType=VARCHAR},
+			#{role_desc,jdbcType=VARCHAR},#{platform_type,jdbcType=VARCHAR}
+			)
+	</insert>
+	
+	<select id="getById" parameterType="java.lang.String" resultType="Role">
+		select * from admin_role where role_id = #{id}
+	</select>
+	
+	<update id="update" parameterType="Resources">
+		update admin_role set 
+			role_name = #{role_name,jdbcType=VARCHAR},role_desc = #{role_desc,jdbcType=VARCHAR},
+			platform_type = #{platform_type,jdbcType=VARCHAR}
+		where role_id = #{role_id,jdbcType=VARCHAR}
+	</update>
+	
+	<delete id="delete" parameterType="java.lang.String">
+		delete from admin_role where role_id = #{id} 
+	</delete>
+	
+	<delete id="deleteBatch" parameterType="java.util.List">
+		delete from admin_role where role_id in 
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+	
+	<delete id="deleteRoleResources" parameterType="java.util.List">
+		delete from admin_roleprivilege where role_id in 
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+	
+	<delete id="deleteRoleUsers" parameterType="java.util.List">
+		delete from admin_userrole where role_id in 
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+	
+	<insert id="addRoleResources" parameterType="java.util.Map">
+		insert into admin_roleprivilege (privilege_id,role_id) 
+		<foreach collection="list" item="item" index="index" separator="UNION">  
+           SELECT #{item}, #{roleId} FROM DUAL  
+        </foreach>
+	</insert>
+	
+</mapper>

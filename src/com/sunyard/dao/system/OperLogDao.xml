@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunyard.dao.system.OperLogDao">
+	<insert id="add" parameterType="OperLog">
+		insert into admin_operlog 
+		(
+			log_id,user_id,user_name,oper_date,user_ip,module_name,class_name,method_name,oper_param,
+			oper_desc,oper_result,error_info
+		) values
+		(
+			#{log_id,jdbcType=INTEGER},#{user_id,jdbcType=VARCHAR},#{user_name,jdbcType=VARCHAR},
+			#{oper_date,jdbcType=VARCHAR},#{user_ip,jdbcType=VARCHAR},#{module_name,jdbcType=VARCHAR},
+			#{class_name,jdbcType=VARCHAR},#{method_name,jdbcType=VARCHAR},#{oper_param,jdbcType=VARCHAR},
+			#{oper_desc,jdbcType=VARCHAR},#{oper_result,jdbcType=VARCHAR},#{error_info,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<select id="query" parameterType="java.util.Map" resultType="OperLog">
+		select * from admin_operlog where 1=1
+		<if test="t.user_id !=null and t.user_id!='' ">
+			and user_id like '%${t.user_id}%'
+		</if>
+		<if test="t.user_name !=null and t.user_name !='' ">
+			and user_name like '%${t.user_name}%'
+		</if>
+		<if test="start_time !=null and start_time !=''">
+			<![CDATA[and substr(oper_date,1,10) >= '${start_time}']]>
+		</if>
+		<if test="end_time !=null and end_time !='' ">
+			<![CDATA[and substr(oper_date,1,10) <= '${end_time}']]>
+		</if>
+		order by oper_date DESC
+	</select>
+</mapper>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	<package name="bussiness" namespace="/" extends="aciton">
+		<!-- sim卡信息管理 -->
+		<action name="simCardAction_*" class="simCardAction" method="{1}">
+			<result name="query">/WEB-INF/jsp/business/simcard_info/simcard_query.jsp</result>
+			<result name="modi">/WEB-INF/jsp/business/simcard_info/simcard_add.jsp</result>
+ 			<result name="add">/WEB-INF/jsp/business/simcard_info/simcard_add.jsp</result>
+			<result name="success">/WEB-INF/jsp/common/success.jsp</result>	
+			<result name="error">/WEB-INF/jsp/common/error.jsp</result>	
+ 			<result name="look">/WEB-INF/jsp/business/simcard_info/simcard_add.jsp</result>
+		</action>
+
+		<!-- sim卡信息管理 -->
+		<action name="smsRecAction_*" class="smsRecAction" method="{1}">
+			<result name="query">/WEB-INF/jsp/business/smsrec/smsrec_query.jsp</result>
+			<result name="success">/WEB-INF/jsp/common/success.jsp</result>
+			<result name="error">/WEB-INF/jsp/common/error.jsp</result>
+			<result name="look">/WEB-INF/jsp/business/smsrec/smsrec_add.jsp</result>
+		</action>
+	</package>
+	
+</struts>

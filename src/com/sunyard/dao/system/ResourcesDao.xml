@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunyard.dao.system.ResourcesDao">
+	<!-- <select id="getUserResources" parameterType="java.lang.String" resultType="Resources">
+		SELECT * FROM admin_privilege WHERE privilege_id IN
+		(
+			SELECT DISTINCT  privilege_id FROM admin_roleprivilege WHERE role_id IN
+			(
+				SELECT role_id FROM admin_userrole  WHERE user_id = #{userid}
+			)
+		)
+	</select>-->
+	
+	<select id="getUserResourcesByName" parameterType="java.lang.String" resultType="Resources">
+		SELECT * FROM admin_privilege WHERE privilege_id IN
+		(
+			SELECT DISTINCT  privilege_id FROM admin_roleprivilege WHERE role_id IN
+			(
+				SELECT role_id FROM admin_userrole ar, admin_user au WHERE ar.user_id = au.user_id AND user_name = #{username} 
+			)
+		) order by sort,privilege_id
+	</select> 
+	
+	<select id="loadResourcesByRoleId" parameterType="java.lang.String" resultType="Resources">
+		select ap.* from admin_privilege ap ,admin_roleprivilege arp where ap.privilege_id = arp.privilege_id and arp.role_id = #{roleId} order by ap.url
+	</select>
+	
+	<select id="query" parameterType="java.util.Map" resultType="Resources">
+		select privilege_id,privilege_name,url,type,sort,valid,platform_type,
+		(select privilege_name from admin_privilege where privilege_id = p.parent_id )parent_id 
+		from admin_privilege p where 1=1
+		<if test="t.privilege_id !=null and t.privilege_id !='' ">
+			and privilege_id like '%${t.privilege_id}%'
+		</if>
+		<if test="t.privilege_name !=null and t.privilege_name !='' ">
+			and privilege_name like '%${t.privilege_name}%'
+		</if>
+		<if test="t.type !=null and t.type !='' ">
+			and type = #{t.type}
+		</if>
+		
+		<if test="t.valid !=null and t.valid !='' ">
+			and valid = #{t.valid}
+		</if>
+		<if test="t.platform_type !=null and t.platform_type  !='' ">
+			and platform_type  = #{t.platform_type }
+		</if>
+		order by privilege_id
+	</select>
+	
+	<select id="queryAll" parameterType="Resources" resultType="Resources">
+		select * from admin_privilege where 1=1
+		
+		<if test="valid !=null and valid !='' ">
+			and valid = #{valid}
+		</if>
+		<if test="platform_type !=null and platform_type  !='' ">
+			and platform_type  = #{platform_type }
+		</if>
+		order by url
+	</select>
+	
+	<insert id="add" parameterType="Resources" >
+		insert into admin_privilege 
+			(privilege_id,privilege_name,parent_id,url,type,sort,valid,platform_type) 
+		values 
+			(#{privilege_id,jdbcType=VARCHAR},#{privilege_name,jdbcType=VARCHAR},
+			#{parent_id,jdbcType=VARCHAR},#{url,jdbcType=VARCHAR},
+			#{type,jdbcType=VARCHAR},#{sort},
+			#{valid,jdbcType=VARCHAR},#{platform_type,jdbcType=VARCHAR})
+	</insert>
+	
+	<select id="getById" parameterType="java.lang.String" resultType="Resources">
+		select * from admin_privilege where privilege_id = #{id}
+	</select>
+	
+	<update id="update" parameterType="Resources">
+		update admin_privilege set 
+			privilege_name = #{privilege_name,jdbcType=VARCHAR},parent_id = #{parent_id,jdbcType=VARCHAR},
+			url = #{url,jdbcType=VARCHAR},type = #{type,jdbcType=VARCHAR},
+			sort = #{sort} ,valid = #{valid,jdbcType=VARCHAR},
+			platform_type = #{platform_type,jdbcType=VARCHAR}
+		where privilege_id = #{privilege_id,jdbcType=VARCHAR}
+	</update>
+	
+	<delete id="delete" parameterType="java.lang.String">
+		delete from admin_privilege where privilege_id = #{id} 
+	</delete>
+	
+	<delete id="deleteBatch" parameterType="java.util.List">
+		delete from admin_privilege where privilege_id in 
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+	
+	<delete id="deleteResourceRoles" parameterType="java.util.List">
+		delete from admin_roleprivilege where privilege_id in 
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+	
+</mapper>

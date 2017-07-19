@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunyard.dao.business.SimCardDao">
+	<!-- 查询sim卡信息 -->
+	<select id="querySimCardInfo" parameterType="java.util.Map" resultType="java.util.Map">
+		select *
+	    from sim_cardinfo where 1=1
+		<if test="t.sim_id != null and t.sim_id != ''">
+			and sim_id like '%${t.sim_id}%'
+		</if>
+		<if test="t.operators != null and t.operators != ''">
+			and operators like '%${t.operators}%'
+		</if>
+		order by CAST(sim_id AS SIGNED)
+	</select>
+
+	<!-- 查询sim卡信息 -->
+	<select id="queryforExport" parameterType="java.util.Map" resultType="SimCardEntity">
+		select *
+		from sim_cardinfo where 1=1
+		<if test="sim_id != null and sim_id != ''">
+			and sim_id like '%${sim_id}%'
+		</if>
+		<if test="operators != null and operators != ''">
+			and operators like '%${operators}%'
+		</if>
+		order by CAST(sim_id AS SIGNED)
+	</select>
+
+	<!-- 新增平台信息 -->
+	<insert id="add" parameterType="SimCardEntity" >
+		insert into sim_cardinfo
+			(sim_id,mobile,user_name,id_card,service_pwd,operators,
+			province,city,author,
+			final_at,final_action,final_update_time,remark)
+			values 
+			(#{sim_id,jdbcType=VARCHAR},#{mobile,jdbcType=VARCHAR},#{user_name,jdbcType=VARCHAR},
+			#{id_card,jdbcType=VARCHAR},#{service_pwd,jdbcType=VARCHAR},#{operators,jdbcType=VARCHAR},
+			#{province,jdbcType=VARCHAR},#{city,jdbcType=VARCHAR},#{author,jdbcType=VARCHAR},
+			#{final_at,jdbcType=VARCHAR},#{final_action,jdbcType=VARCHAR},now(),#{remark,jdbcType=VARCHAR})
+	</insert>
+
+	<!-- 修改sim卡信息 -->
+	<update id="update" parameterType="SimCardEntity" >
+		update sim_cardinfo set mobile=#{mobile},user_name=#{user_name},
+		id_card=#{id_card},service_pwd=#{service_pwd},operators=#{operators},
+		province=#{province},city=#{city},author=#{author},
+		final_at=#{final_at},final_action=#{final_action},final_update_time=now(),remark=#{remark}
+		WHERE sim_id = #{sim_id}
+	</update>
+
+	<!-- 删除sim卡信息 -->
+	<delete id="delete" parameterType="java.lang.String">
+		delete from sim_cardinfo WHERE sim_id = #{sim_id}
+	</delete>
+
+    <!-- 通过ID获取sim卡信息 -->
+    <select id="getById" parameterType="java.lang.String" resultType="SimCardEntity">
+        select * from sim_cardinfo where sim_id = #{sim_id}
+    </select>
+
+</mapper>

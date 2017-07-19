@@ -1,0 +1,68 @@
+/**
+	 * 注册的时候做了五件事：1、保存用户信息；2、插入账户流水号；3、初始化平台账号科目
+	 * 4、插入推荐人信息；5、给推荐人奖励
+*/
+userDao.addFlow(params);
+	<!--业务流水表-->
+	<insert id="addFlow" parameterType="java.util.Map">
+		insert into
+		trans_accreq(serial_id,trans_code,trans_name,trans_date,trans_time,channel,eacc_no,plat_code)
+		values(#{serial_id},#{trans_code},#{trans_name},NOW(),NOW(),#{channel},#{eacc_no},#{plat_code}
+		)
+	</insert>
+
+		//根据身份证查询用户信息
+		Map<String, Object> cust = userDao.getCustInfo(params);
+		//查询是否有相应的个人用户
+		String cust_no = null;
+		if(null!=cust){
+			cust_no = String.valueOf(cust.get("cust_no"));
+			params.put("cust_no", cust_no);	
+
+		}else{
+			//生成客户编号
+			cust_no = GenerateSeqUtil.generateAccSeq(new String[] { SEQCODETYPE.CUST_ID.getCode() }).get(SEQCODETYPE.CUST_ID.getCode());
+			params.put("cust_no", cust_no);	
+			userDao.addCustInfo(params);
+			
+		}	
+
+	<!--查询实名用户-->
+	<select id="getCustInfo" resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT * FROM eacc_customerinfo 
+		WHERE id_code=#{id_code} 	
+	</select>
+
+	<!--新增个人信息-->
+	<insert id="addCustInfo" parameterType="java.util.Map">
+		INSERT INTO
+		eacc_customerinfo(cust_no,name,id_type,id_code,mobile,email,birthday,sex,reg_time,cus_type,plat_code,acc_state)
+		VALUES(#{cust_no},#{name},#{id_type},#{id_code},#{mobile},#{email},#{birthday},#{sex},NOW(),#{cus_type},#{plat_code},#{acc_state});
+	</insert>
+
+
+		//插入平台用户记录
+		userDao.addPlatUser(params);
+
+		//插入资金用户记录(暂定两条数据)
+		params.put("t_balance", new BigDecimal("0.00"));
+		params.put("n_balance", new BigDecimal("0.00"));
+		params.put("f_balance", new BigDecimal("0.00"));
+		params.put("i_balance", new BigDecimal("0.00"));
+
+		params.put("t_subject", TSUBJECT.FreeDom.getCode());// 自有资金
+		params.put("s_subject", SSUBJECT.FreeDom.getCode());// 自有资金
+		userDao.addFundUser(params);
+
+
+		params.put("t_subject", TSUBJECT.FreeDom.getCode());// 自有资金
+		params.put("s_subject", SSUBJECT.Financing.getCode());//投资资金
+		userDao.addFundUser(params);
+
+		<!--资金用户信息-->
+        	<insert id="addFundUser" parameterType="java.util.Map">
+        		INSERT INTO
+        		plat_accountinfo(eacc_no,plat_code,t_balance,n_balance,f_balance,i_balance,t_subject,s_subject)
+        		VALUES(#{eacc_no},#{plat_code},#{t_balance},#{n_balance},#{f_balance},#{i_balance},#{t_subject},#{s_subject});
+        	</insert>
+

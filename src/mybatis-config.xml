@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<!-- setting配置,在null时也调用 setter,适应于返回Map,3.2版本号以上可用s -->
+	<settings>
+		<setting name="callSettersOnNulls" value="true"/>
+	</settings>
+	<typeAliases>
+		<typeAlias type="com.sunyard.entity.system.UserEntity" alias="User"/>
+		<typeAlias type="com.sunyard.entity.system.RoleEntity" alias="Role"/>
+		<typeAlias type="com.sunyard.entity.system.ResourceEntity" alias="Resources"/>
+		<typeAlias type="com.sunyard.entity.system.DepartmentEntity" alias="Department"/>
+		<typeAlias type="com.sunyard.entity.system.DictEntity" alias="Dict"/>
+		<typeAlias type="com.sunyard.entity.system.DictMapEntity" alias="DictMap"/>
+		<typeAlias type="com.sunyard.entity.system.SysParamEntity" alias="SysParam"/>
+		<typeAlias type="com.sunyard.entity.system.OperLogEntity" alias="OperLog"/>
+		<typeAlias type="com.sunyard.entity.system.RunLogEntity" alias="RunLog"/>
+		<typeAlias type="com.sunyard.entity.system.PwdHistoryEntity" alias="PwdHistory"/>
+
+		<typeAlias type="com.sunyard.entity.business.SimCardEntity" alias="SimCardEntity"/>
+
+	</typeAliases>
+</configuration>
+

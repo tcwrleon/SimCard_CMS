@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunyard.dao.system.UserDao">
+
+	<select id="usersByUsername" parameterType="java.lang.String" resultType="User">
+		select * from admin_user where user_name = #{username}
+	</select>
+	
+	<sql id="dynamicQuerySql">
+		<if test="t.department_id !=null and t.department_id !='' ">
+			and u.department_id = #{t.department_id}
+		</if>
+		<if test="t.user_id !=null and t.user_id !='' ">
+			and u.user_id like '%${t.user_id}%'
+		</if>
+		<if test="t.user_name !=null and t.user_name !='' ">
+			and u.user_name like '%${t.user_name}%'
+		</if>
+		<if test="t.user_state !=null and t.user_state !='' ">
+			and u.user_state = #{t.user_state}
+		</if>
+	</sql>
+	
+	<select id="query" parameterType="java.util.Map" resultType="User">
+		select u.*,d.department_name from admin_user u left join admin_department d 
+		on  u.department_id = d.department_id where 1=1 
+		<include refid="dynamicQuerySql"></include>
+	</select>
+	
+	<select id="queryUserRoles" parameterType="java.util.Map" resultType="java.util.Map">
+		select u.*,r.* from admin_userrole aur,admin_user u,admin_role r 
+		where aur.user_id = u.user_id and aur.role_id = r.role_id and r.platform_type =#{platform_type}
+		<include refid="dynamicQuerySql"></include>
+		order by u.user_id,r.role_id
+
+	</select> 
+	<insert id="add" parameterType="User">
+		insert into admin_user 
+			(user_id,user_name,user_pwd,user_type,user_state,create_date,pwd_modify_date,user_desc,department_id,
+			initpwd,user_phone,user_email,user_addr,user_mobile,user_certno,cert_type,modi_time,modi_user,pwd_error_num
+			) 
+		values 
+			(#{user_id,jdbcType=VARCHAR},#{user_name,jdbcType=VARCHAR},
+			#{user_pwd,jdbcType=VARCHAR},#{user_type,jdbcType=VARCHAR},
+			#{user_state,jdbcType=VARCHAR},#{create_date,jdbcType=VARCHAR},
+			#{pwd_modify_date,jdbcType=VARCHAR},#{user_desc,jdbcType=VARCHAR},
+			#{department_id,jdbcType=VARCHAR},#{initpwd,jdbcType=VARCHAR},
+			#{user_phone,jdbcType=VARCHAR},#{user_email,jdbcType=VARCHAR},
+			#{user_addr,jdbcType=VARCHAR},#{user_mobile,jdbcType=VARCHAR},
+			#{user_certno,jdbcType=VARCHAR},#{cert_type,jdbcType=VARCHAR},
+			#{modi_time,jdbcType=VARCHAR},#{modi_user,jdbcType=VARCHAR},0
+			)
+	</insert>
+	
+	<insert id="addPwdHistory" parameterType="PwdHistory">
+		insert into user_pwd_history
+			(flow_id,login_pwd,create_time,user_name,platform_type)
+		values
+			(#{flow_id,jdbcType=VARCHAR},#{login_pwd,jdbcType=VARCHAR},
+			#{create_time,jdbcType=VARCHAR},#{user_name,jdbcType=VARCHAR},
+			#{platform_type,jdbcType=VARCHAR}
+			)
+		<selectKey keyProperty="flow_id" resultType="String" order="BEFORE">  
+           select PWD_HISTORY_SEQ.nextval from dual
+        </selectKey>
+	</insert>
+	
+	<select id="getPwdHistory" parameterType="java.util.Map" resultType="java.lang.String">
+		select * from (
+			select login_pwd from user_pwd_history where user_name=#{userName} 
+			and platform_type=#{platType} order by create_time DESC
+		) where <![CDATA[rownum <= #{queryNum}]]>
+	</select>
+	
+	<select id="getById" parameterType="java.lang.String" resultType="User">
+		select t.*,d.department_name from admin_user t 
+		left join admin_department d on t.department_id = d.department_id 
+		where user_id = #{id}
+	</select>
+	
+	<update id="update" parameterType="User">
+		update admin_user set 
+			user_name = #{user_name,jdbcType=VARCHAR},user_type = #{user_type,jdbcType=VARCHAR},
+			user_state = #{user_state,jdbcType=VARCHAR},user_desc = #{user_desc,jdbcType=VARCHAR},
+			department_id = #{department_id,jdbcType=VARCHAR} ,user_phone = #{user_phone,jdbcType=VARCHAR},
+			user_email = #{user_email,jdbcType=VARCHAR} ,user_addr = #{user_addr,jdbcType=VARCHAR},
+			user_mobile = #{user_mobile,jdbcType=VARCHAR} ,user_certno = #{user_certno,jdbcType=VARCHAR},
+			cert_type = #{cert_type,jdbcType=VARCHAR} ,modi_time = #{modi_time,jdbcType=VARCHAR},
+			modi_user = #{modi_user,jdbcType=VARCHAR}
+		where user_id = #{user_id,jdbcType=VARCHAR}
+	</update>
+	
+	<delete id="deleteBatch" parameterType="java.util.List">
+		delete from admin_user where user_id in 
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+	
+	<delete id="deleteUserRole" parameterType="java.util.List">
+		delete from admin_userrole where user_id in 
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+	
+	<update id="updateUserStt" parameterType="java.util.Map">
+		update admin_user set modi_time = #{t.modi_time,jdbcType=VARCHAR},
+		modi_user = #{t.modi_user,jdbcType=VARCHAR},user_state = #{t.user_state,jdbcType=VARCHAR}
+		where user_id in 
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+			#{item}
+		</foreach> 
+	</update>
+	
+	<select id="getUserState" parameterType="java.util.List" resultType="java.lang.String">
+		select user_state from admin_user where user_id in
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+	
+	<update id="setPwdErrorNumZeroBatch" parameterType="java.util.List">
+		update admin_user set pwd_error_num = 0 
+		where user_id in 
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+			#{item}
+		</foreach> 
+	</update>
+	
+	<select id="rolesByUserId" parameterType="java.lang.String" resultType="Role">
+		select ar.* from admin_userrole aur left join admin_role ar on aur.role_id = ar.role_id where aur.user_id = #{userId}
+	</select>
+	
+	<update id="updateUserPwd" parameterType="User">
+		update admin_user set modi_time = #{modi_time,jdbcType=VARCHAR},
+		modi_user = #{modi_user,jdbcType=VARCHAR},pwd_modify_date = #{pwd_modify_date,jdbcType=VARCHAR},
+		initpwd = #{initpwd,jdbcType=VARCHAR},user_pwd = #{user_pwd,jdbcType=VARCHAR}
+		where user_id = #{user_id,jdbcType=VARCHAR}
+	</update>
+	
+	<update id="setDefultPwd" parameterType="java.util.Map">
+		update admin_user set modi_time = #{t.modi_time,jdbcType=VARCHAR},
+		modi_user = #{t.modi_user,jdbcType=VARCHAR},pwd_modify_date = #{t.pwd_modify_date,jdbcType=VARCHAR},
+		initpwd = #{t.initpwd,jdbcType=VARCHAR},user_pwd = #{t.user_pwd,jdbcType=VARCHAR}
+		where user_id in 
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+			#{item}
+		</foreach> 
+	</update>
+	
+	<!-- 批量插入时MYSQL与oracle方式不一样 -->
+	<insert id="insertUserRoles" parameterType="java.util.Map">
+		insert into admin_userrole (role_id,user_id) 
+		<foreach collection="list" item="item" index="index" separator="UNION">  
+           SELECT #{item} , #{userId} FROM DUAL  
+        </foreach>
+	</insert>
+	
+	<update id="updatePwdErrorNum" parameterType="java.lang.String">
+		update admin_user set pwd_error_num = pwd_error_num + 1  where user_name=#{userName}
+	</update>
+	
+	<update id="setPwdErrorNumZero" parameterType="java.lang.String">
+		update admin_user set pwd_error_num = 0  where user_name=#{userName}
+	</update>
+
+	<select id="queryUserPwd" parameterType="java.lang.String" resultType="java.lang.String">
+		select user_pwd from admin_user where user_name = #{username}
+	</select>
+	<!-- 获取role_id -->
+	<select id="queryUserRoleId" parameterType="java.lang.String" resultType="java.lang.String">
+		select aur.role_id from admin_user au left join admin_userrole aur on au.user_id=aur.user_id 
+		where au.user_name = #{username}
+	</select>
+</mapper>

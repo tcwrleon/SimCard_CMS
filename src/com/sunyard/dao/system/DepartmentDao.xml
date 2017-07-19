@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunyard.dao.system.DepartmentDao">
+	
+	<sql id="commonSelectSql">
+		select department_id, department_name,department_level,department_inner_id,department_desc,department_stt,
+		(select department_name from admin_department where department_id = d.department_pid)department_pid 
+		from admin_department d
+	</sql>
+	
+	<select id="queryAll" parameterType="Department" resultType="Department">
+		select * from admin_department where 1=1  
+		<if test="department_stt !=null and department_stt !='' ">
+			and department_stt = #{department_stt}
+		</if>
+		order by department_id
+	</select>
+	
+	<select id="query" parameterType="java.util.Map" resultType="Department">
+		<include refid="commonSelectSql"/> where 1=1 
+		<if test="t.department_id !=null and t.department_id !='' ">
+			and (department_id like '%${t.department_id}%' or department_pid like '%${t.department_id}%')
+		</if>
+		<if test="t.department_name !=null and t.department_name !='' ">
+			and department_name like '%${t.department_name}%'
+		</if>
+		order by department_id
+	</select>
+	
+	<insert id="add" parameterType="Department" >
+		insert into admin_department 
+			(department_id,department_name,department_level,department_pid,department_inner_id,department_desc,department_stt) 
+		values 
+			(#{department_id,jdbcType=VARCHAR},#{department_name,jdbcType=VARCHAR},
+			#{department_level,jdbcType=VARCHAR},#{department_pid,jdbcType=VARCHAR},
+			#{department_inner_id,jdbcType=VARCHAR},#{department_desc,jdbcType=VARCHAR},
+			#{department_stt,jdbcType=VARCHAR})
+	</insert>
+	
+	<select id="getById" parameterType="java.lang.String" resultType="Department">
+		select department_id, department_name,department_level,department_inner_id,department_desc,department_stt,department_pid, 
+    	(select department_name from admin_department where department_id = t.department_pid) department_pid_name 
+		from admin_department t  where department_id = #{id}
+	</select>
+	
+	<update id="update" parameterType="Department">
+		update admin_department set 
+			department_name = #{department_name,jdbcType=VARCHAR},department_level = #{department_level,jdbcType=VARCHAR},
+			department_pid = #{department_pid,jdbcType=VARCHAR},department_inner_id = #{department_inner_id,jdbcType=VARCHAR},
+			department_desc = #{department_desc,jdbcType=VARCHAR} ,department_stt = #{department_stt,jdbcType=VARCHAR}
+		where department_id = #{department_id,jdbcType=VARCHAR}
+	</update>
+	
+	<delete id="delete" parameterType="java.lang.String">
+		delete from admin_department where department_id = #{id} or department_pid = #{id}
+	</delete>
+	
+</mapper>
