@@ -1,4 +1,4 @@
-package com.sunyard.access;
+package com.sunyard.datasource;
 
 import com.sunyard.pulgin.PageView;
 import com.sunyard.util.PropertiesUtil;
@@ -43,7 +43,15 @@ public class AccessManager {
 
 	public static void main(String args[]) throws Exception {
 		getInstance().ConnectAccessFile();
-	}
+
+/*        String sql = "select top 8 *      from L_SMS where 1=1 and id not in (select top 8 id from L_SMS order by id DESC )        order by id DESC";
+        String dataBaseName = sql.substring(sql.indexOf("from") + 4 , sql.indexOf("where")).trim();
+        System.out.println(dataBaseName);
+        String orderBy = sql.substring(sql.lastIndexOf("order"));
+        System.out.println(orderBy);*/
+
+
+    }
 
     public void deleteSMS(String id){
         String sql = " delete from L_SMS where id = " + id;
@@ -98,12 +106,20 @@ public class AccessManager {
 
     private void ConnectAccessFile() throws Exception
     {
-        rs = stmt.executeQuery("select * from L_SMS");
+        //rs = stmt.executeQuery("select * from L_SMS");
+
+
+        rs = stmt.executeQuery("select top 10 id,number,content,time,imsi,iccid,simnum" +
+                "    from L_SMS where 1=1 and id not in (select top 10 id from L_SMS where 1=1 and simnum like '%%13560260059%%' order by id DESC )" +
+                "and simnum like '%%13560260059%%'" +
+                "order by id DESC ");
         while (rs.next()) {
+            System.out.print("ID:" + rs.getString("id") + " ");
             System.out.print("本机号码:" + rs.getString("simnum") + " ");
             System.out.print("内容:" + rs.getString("content") + " ");
             System.out.print("对方号码:" + rs.getString("number") + " ");
             System.out.println("接收时间:" + rs.getString("time") + " ");
         }
     }
+
 }

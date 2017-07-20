@@ -1,14 +1,11 @@
 package com.sunyard.service.business.impl;
 
-import com.sunyard.access.AccessManager;
-import com.sunyard.dao.business.SimCardDao;
-import com.sunyard.entity.business.SimCardEntity;
+import com.sunyard.datasource.AccessManager;
+import com.sunyard.dao.business.SimRecDao;
+import com.sunyard.datasource.CustomerContextHolder;
 import com.sunyard.entity.business.SmsRecEntity;
-import com.sunyard.enums.DICTKEY;
 import com.sunyard.pulgin.PageView;
-import com.sunyard.service.business.SimCardService;
 import com.sunyard.service.business.SmsRecService;
-import com.sunyard.util.DDUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,20 +18,23 @@ import java.util.Map;
 @Transactional
 public class SmsRecServiceImpl implements SmsRecService {
 
+	@Resource
+	private SimRecDao simRecDao;
+
 	@Override
 	public PageView querySmsRecInfo(PageView pageView, Map<String, String> param) throws Exception{
-		List<Map<String,String>> list = AccessManager.getInstance().querySimCardInfo(pageView,param);
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put("paging", pageView);
+		map.put("t", param);
+		List<Map<String,Object>> list = simRecDao.querySimCardSMS(map);
 		System.out.println("list===="+list);
-		/*for(Map<String,String> item : list){
-			if(item.get("operators")!=null) item.put("operators", DDUtil.getContent(DICTKEY.SIM_OPERATORS.toString(), item.get("operators").toString()));
-		}*/
 		pageView.setResult(list);
 		return pageView;
 	}
 
     @Override
     public void deleteSMS(String id) throws Exception {
-        AccessManager.getInstance().deleteSMS(id);
+		simRecDao.deleteSMS(id);
     }
 
 

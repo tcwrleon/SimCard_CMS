@@ -18,6 +18,7 @@
 		<typeAlias type="com.sunyard.entity.system.PwdHistoryEntity" alias="PwdHistory"/>
 
 		<typeAlias type="com.sunyard.entity.business.SimCardEntity" alias="SimCardEntity"/>
+		<typeAlias type="com.sunyard.entity.business.SmsRecEntity" alias="SmsRecEntity"/>
 
 	</typeAliases>
 </configuration>

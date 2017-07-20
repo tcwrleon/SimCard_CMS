@@ -4,8 +4,9 @@ package com.sunyard.entity.business;
  * Created by LC on 2017-01-12.
  */
 public class SmsRecEntity {
-
     private String id;
+    private String imsi;
+    private String iccid;
     private String simnum;
     private String content;
     private String number;

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunyard.dao.business.SimRecDao">
+
+	<resultMap type ="SmsRecEntity" id="SmsRecEntityMap">
+		<result property ="id" column="id" />
+		<result property ="imsi" column="imsi" />
+		<result property ="iccid" column="iccid" />
+		<result property ="simnum" column="simnum" />
+		<result property ="content" column="content" />
+		<result property ="number" column="number" />
+		<result property ="time" column="time" />
+	</resultMap >
+
+	<!-- 查询短信 -->
+	<select id="querySimCardSMS" parameterType="java.util.Map" resultMap= "SmsRecEntityMap">
+		select id,number,content,time,imsi,iccid,simnum
+	    from L_SMS where 1=1
+		<if test="t.simnum != null and t.simnum != ''">
+			and simnum like '%%${t.simnum}%%'
+		</if>
+		order by id DESC
+	</select>
+
+	<!-- 删除接收到的短信 -->
+	<delete id="deleteSMS" parameterType="java.lang.String">
+		delete from L_SMS where id=#{id}
+	</delete>
+
+</mapper>
