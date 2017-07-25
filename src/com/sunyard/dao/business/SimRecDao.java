@@ -10,6 +10,8 @@ public interface SimRecDao extends BaseDao<SmsRecEntity>{
 
 	public List<Map<String, Object>> querySimCardSMS(Map<String, Object> param) throws Exception;
 
+	public String queryCode(String simnum) throws  Exception;
+
 	public void deleteSMS(String id) throws Exception;
 
 }

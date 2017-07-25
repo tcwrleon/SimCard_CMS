@@ -22,6 +22,13 @@
 		order by id DESC
 	</select>
 
+	<!-- 查询短信 -->
+	<select id="queryCode" parameterType="java.lang.String" resultType= "java.lang.String">
+		select top 1 content
+		from L_SMS where simnum=#{simnum}
+		order by id DESC
+	</select>
+
 	<!-- 删除接收到的短信 -->
 	<delete id="deleteSMS" parameterType="java.lang.String">
 		delete from L_SMS where id=#{id}

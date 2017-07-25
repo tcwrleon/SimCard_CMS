@@ -17,10 +17,11 @@
 
 		<!-- sim卡信息管理 -->
 		<action name="smsRecAction_*" class="smsRecAction" method="{1}">
-			<result name="query">/WEB-INF/jsp/business/smsrec/smsrec_query.jsp</result>
+			<result name="queryCMCC">/WEB-INF/jsp/business/smsrec/smsrec_queryCMCC.jsp</result>
+			<result name="queryCTCC">/WEB-INF/jsp/business/smsrec/smsrec_queryCTCC.jsp</result>
+			<result name="queryCUCC">/WEB-INF/jsp/business/smsrec/smsrec_queryCUCC.jsp</result>
 			<result name="success">/WEB-INF/jsp/common/success.jsp</result>
 			<result name="error">/WEB-INF/jsp/common/error.jsp</result>
-			<result name="look">/WEB-INF/jsp/business/smsrec/smsrec_add.jsp</result>
 		</action>
 	</package>
 	

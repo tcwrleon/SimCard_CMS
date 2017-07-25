@@ -11,5 +11,7 @@ public interface SmsRecService extends BaseService<SmsRecEntity>{
 
 	public PageView querySmsRecInfo(PageView pageView, Map<String,String> param) throws Exception;
 
+    public String queryCode(String simnum) throws Exception;
+
     public void deleteSMS (String time)throws Exception;
 }

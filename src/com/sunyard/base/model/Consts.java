@@ -9,6 +9,10 @@ import com.sunyard.util.PropertiesUtil;
 public class Consts {
 	
 	/**
+	 * 手机验证码查询为空
+	 */
+	public static final String CODE_NONE =  "none";
+	/**
 	 * 公共跳转页面：错误页面
 	 */
 	public static final String ERROR =  "error";

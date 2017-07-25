@@ -6,6 +6,7 @@ import com.sunyard.datasource.CustomerContextHolder;
 import com.sunyard.entity.business.SmsRecEntity;
 import com.sunyard.pulgin.PageView;
 import com.sunyard.service.business.SmsRecService;
+import com.sunyard.util.PhoneUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +33,13 @@ public class SmsRecServiceImpl implements SmsRecService {
 		return pageView;
 	}
 
-    @Override
+	@Override
+	public String queryCode(String simnum) throws Exception {
+		String content = simRecDao.queryCode(simnum);
+		return PhoneUtil.getCode(content);
+	}
+
+	@Override
     public void deleteSMS(String id) throws Exception {
 		simRecDao.deleteSMS(id);
     }

@@ -4,15 +4,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>接收短信管理</title>
+<title>电信短信管理</title>
 	<%@ include file="../../common/jslibs.jsp"%>
 	<%@ include file="../../common/csslibs.jsp"%>
 </head>
 <body>
 	<div class="main-title" id="Title"><!--页面标题-->
-		接收短信管理
+		电信短信管理
     </div>
-	<form action="smsRecAction_toQuery" method="post" name="qryForm">
+	<form action="smsRecAction_toQueryCTCC" method="post" name="qryForm">
 	<ul id="mainAction" class="main-actions clearfix">
 		<li>
 			<label>接收方：</label>
@@ -22,7 +22,7 @@
 		</li>
 		
 	</ul>
-	<input type="hidden" name="_backUrl" value="smsRecAction_toQuery"/>
+	<input type="hidden" name="_backUrl" value="smsRecAction_toQueryCTCC"/>
 	</form>
     <div class="toolBar">
     	<span class="toolbar-icon"></span>
@@ -68,7 +68,7 @@
 	</div>
 	<div class="page-tag clearfix">
 		<div style="float:left">
-			<form action="smsRecAction_toQuery" method="post" name="listForm">
+			<form action="smsRecAction_toQueryCTCC" method="post" name="listForm">
 				<input type="hidden" name="pageNo"/>
 				${paramCover.unCoveredForbidInputs} ${page.footerHtml}
 			</form>
@@ -77,14 +77,14 @@
 	</div>	
 	<form method="post" name="detailForm" action="">
 		<input type="hidden" name="selectedId" id="selectedId" />
-		<input type="hidden" name="_backUrl" value="smsRecAction_toQuery"/>
+		<input type="hidden" name="_backUrl" value="smsRecAction_toQueryCTCC"/>
 			${paramCover.coveredInputs}
 	</form>
 	<script type="text/javascript">
 		$(document).ready(function() {
 		});
 		var checkedLists = $("input[name='item']");
-		var queryUrl = "smsRecAction_toQuery";
+		var queryUrl = "smsRecAction_toQueryCTCC";
 		for(var i = 0; i < checkedLists.length; i++) {
 			checkedLists.eq(i).click(function(){
 				if($(this).is(":checked")){
@@ -118,7 +118,7 @@
 				return;
 			}else {
 				if(confirm("确定要删除所选短信信息吗？")) {
-					detailForm.action = "smsRecAction_delete";					
+					detailForm.action = "smsRecAction_deleteCTCC";
 					detailForm.selectedId.value = id;
 					detailForm.submit();
 				}

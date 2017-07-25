@@ -62,15 +62,47 @@
 		<property name="testOnBorrow" value="true"/>
 	</bean>
 
-	<!--猫池的dataSource-->
-	<bean id="dataSourceCatPool" class="org.apache.commons.dbcp.BasicDataSource">
-		<property name="driverClassName" value="${access.driverClassName}"/>
-		<property name="url" value="${access.url}"/>
+	<!--猫池的移动dataSource-->
+	<bean id="dataSourceCatPoolCMCC" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${access.cmcc.driverClassName}"/>
+		<property name="url" value="${access.cmcc.url}"/>
 		<property name="username">
-			<value>${access.username}</value>
+			<value>${access.cmcc.username}</value>
 		</property>
 		<property name="password">
-			<value>${access.password}</value>
+			<value>${access.cmcc.password}</value>
+		</property>
+		<property name="maxActive" value="${jdbc.maxActive}"/>
+		<property name="maxIdle"  value="${jdbc.maxIdle}"/>
+		<property name="maxWait" value="${jdbc.maxWait}"/>
+		<property name="defaultAutoCommit" value="${jdbc.defaultAutoCommit}"/>
+	</bean>
+
+	<!--猫池的电信dataSource-->
+	<bean id="dataSourceCatPoolCTCC" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${access.ctcc.driverClassName}"/>
+		<property name="url" value="${access.ctcc.url}"/>
+		<property name="username">
+			<value>${access.ctcc.username}</value>
+		</property>
+		<property name="password">
+			<value>${access.ctcc.password}</value>
+		</property>
+		<property name="maxActive" value="${jdbc.maxActive}"/>
+		<property name="maxIdle"  value="${jdbc.maxIdle}"/>
+		<property name="maxWait" value="${jdbc.maxWait}"/>
+		<property name="defaultAutoCommit" value="${jdbc.defaultAutoCommit}"/>
+	</bean>
+
+	<!--猫池的联通dataSource-->
+	<bean id="dataSourceCatPoolCUCC" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${access.cucc.driverClassName}"/>
+		<property name="url" value="${access.cucc.url}"/>
+		<property name="username">
+			<value>${access.cucc.username}</value>
+		</property>
+		<property name="password">
+			<value>${access.cucc.password}</value>
 		</property>
 		<property name="maxActive" value="${jdbc.maxActive}"/>
 		<property name="maxIdle"  value="${jdbc.maxIdle}"/>
@@ -84,7 +116,9 @@
 			<map key-type="java.lang.String">
 				<!--通过不同的key决定用哪个dataSource-->
 				<entry value-ref="dataSourceMain" key="dataSourceMain"></entry>
-				<entry value-ref="dataSourceCatPool" key="dataSourceCatPool"></entry>
+				<entry value-ref="dataSourceCatPoolCMCC" key="dataSourceCatPoolCMCC"></entry>
+				<entry value-ref="dataSourceCatPoolCTCC" key="dataSourceCatPoolCTCC"></entry>
+				<entry value-ref="dataSourceCatPoolCUCC" key="dataSourceCatPoolCUCC"></entry>
 			</map>
 		</property>
 		<!--设置默认的dataSource-->
