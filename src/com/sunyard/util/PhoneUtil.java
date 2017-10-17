@@ -182,6 +182,7 @@ public class PhoneUtil {
                             break;
                         }
                     }
+                    if(content.length() == code.length()) return code;
                     if (content.charAt(i) != '年' && content.charAt(i) != '月' && content.charAt(i) != '日') {
                         if (code.length() == 4 || code.length() == 6) return code;
                     }
@@ -193,7 +194,7 @@ public class PhoneUtil {
 
 
     public static void main(String[] args) {
-        System.out.println(getCode(""));
+        System.out.println(getCode("123456"));
     }
 
 }  

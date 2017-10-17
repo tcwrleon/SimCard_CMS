@@ -6,7 +6,8 @@
 <struts>
 	<constant name="struts.enable.DynamicMethodInvocation" value="false" />
 	<constant name="struts.devMode" value="false" />
-	<constant name="struts.multipart.maxSize" value="40000000"/> 
+	<constant name="struts.multipart.maxSize" value="40000000"/>
+	<!--<constant name="struts.handle.exception" value="false" />-->
 	<!-- <constant name="struts.action.extension" value="do"/> -->
 	<package name="aciton" namespace="/" extends="struts-default">
 		<interceptors>
